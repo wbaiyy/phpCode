@@ -1,0 +1,89 @@
+
+task-coupon审核命令
+/opt/htdocs/weijie/gearbest-task/artisan task:event --queue=auditResultNotify_GB
+/opt/htdocs/weijie/gearbest-task/artisan task:event --queue=promotionCouponMsgForApproveCenter_GB
+
+
+审核中心日志
+/var/log/audit_engine/environment2/test_obsAuditResult_OBS.log
+/var/log/audit_engine/environment1/test_obsAuditResult_OBS.log
+/var/log/audit_engine/environment2/test_auditMessage_OBS.log
+/var/log/audit_engine/environment1/test_auditMessage_OBS.log
+
+
+选推策略管理，锁 和 fail++失败或成功不准问题
+
+
+https://www.nowcoder.com/discuss/327679?type=0&order=0&pos=60&page=1
+
+有 2n 个人，序号为 0 到 2n-1，要求两两握手，但是握手不能存在交叉线，求最后一
+共存在多少种握手可能，写出 f(2n)表达式。
+1 2 3 4 5 6  7 8
+
+【[1 2] [1 3] [1 4] [1 5] [1 6] [2 3] [2 4] [2 5] [2 6] [3 4] [3 5] [3 6] [4 5] [4 6] [5 6]】
+
+[1 2] [3 4] [5 6]
+[1 2] [3 5] [4 6]
+[1 2] [3 6] [4 5]
+[1 2] []
+[1 2]
+
+[1 3] [2 4] [5 6]
+[1 3] [2 5] [4 6]
+[1 3] [2 6] [4 5]
+
+[1 4] [2 3] [5 6]
+[1 4] [2 5] [3 6]
+[1 4] [2 6] [3 5]
+
+.....
+
+C82 = 7 * 8/2 =
+
+
+[
+  [1, 2],
+  [3, 4],
+  [5, 6],
+  [7, 8],
+]
+
+给定一个二维整数矩阵，找出最长递增路径的长度。对于每个单元格，你可以往上，下，左，右四个方向移动。
+ 你不能在对角线方向上移动或移动到边界外（即不允许环绕）。
+ 
+ 
+智能化产品选择推广系统
+
+多渠道智能化选择产品，包括单条，批量，文件导入，基于任务维度的后台自动运行。
+可配置化定时推送推广渠道（消息和API）、多维度过滤产品以及齐全推送日志查询的策略管理。
+产品沟通反馈实时通知(邮件和消息)、推广效果产品趋势分析包括实时销量、曝光率和产品转化率等
+
+定时任务和常驻任务管理系统，基于Go语言和beego框架开发。用于统一管理项目中的定时任务和常驻任务，
+提供可视化配置界面、执行日志记录、邮件通知等功能，无需依赖unix下的crontab服务。
+
+基于开源项目个性化定义完成开发包括，定时任务模块、常驻任务模块以及登录认证模块。
+
+
+
+自我评价
+1. 精通 web编程语言PHP，了解主流 php 开源框架（如 Yii2,Laravel,Swoole等），熟悉 MVC,面对对象编程, 熟悉 PSR 编程规范;
+2. 熟悉 TCP/IP 协议，了解 Socket 通信和 HTTP 协议;
+3. 熟悉 LNMP 技术栈，了解常见分布式架构方式，nginx rewrite和负载均衡、cdn 缓存代理等;
+4. 熟悉 linux 常用命令，能在 linux 环境下配置电商平台;
+5. 熟悉 MySQL 数据库，以及优化、索引、复制和拆分等;
+6. 熟悉 redis 数据结构、常见场景、主从同步以及哨兵模式等等
+7. 熟悉 mq 消息队列的特点，常见使用场景等
+8. 了解 HTML、JSON、CSS、JAVASCRIPT、JQUERY、AJAX、JSONP 等前端技术;
+9. 具有优良的编码风格和习惯，并会编写相关开发文档;
+10. 本人性格开朗、谦虚、自律、自信、稳重、有活力、有较强的责任感和团体协作精神,工作认真、积极主动， 能吃苦耐劳，乐于助人、有上进心、乐于接受新事物。
+
+
+
+ 
+ 
+
+
+
+
+
+

@@ -1,0 +1,17 @@
+[2017-03-30 16:18:24][172.31.29.207][174.116.79.98][2017620][-][cart/cart/apply][info][curl-soa] POST 200 http://cart.trendsgal.com/cart/apply(http://cart.trendsgal.com/)
+[
+    'time' => '0.213 s',
+    'method' => 'trendsgal.inter.CartApi',
+    'uri' => 'getListCart',
+    'service' => 'app\\services\\cart\\CartService',
+    'error' => null,
+]
+LOG-SEPARATOR
+[2017-03-30 16:17:58][172.31.29.207][174.116.79.98][2017620][-][cart/cart/delete][info][curl-soa] GET 200 http://cart.trendsgal.com/cart/delete?ids=6247024337682292736(http://cart.trendsgal.com/)
+[
+    'time' => '0.2037 s',
+    'method' => 'trendsgal.inter.CartApi',
+    'uri' => 'getListCart',
+    'service' => 'app\\services\\cart\\CartService',
+    'error' => null,
+]

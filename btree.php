@@ -300,8 +300,6 @@ foreach ($testList as $value) {
     $btree->insert($value);
 }
 
-//var_export(count($btree->nodeMap));die;
-var_export($btree);die;
 
 /************************************ 插入B树的所有元素 **********************************/
 echo '插入B树的所有元素: <br>';

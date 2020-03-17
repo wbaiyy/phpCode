@@ -1,0 +1,4 @@
+/vendor
+/tests/.env.php
+/.idea
+/htdocs/coverage

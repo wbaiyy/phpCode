@@ -1,0 +1,38 @@
+{
+    "name": "Wbaiyy/php-gateway",
+    "description": "gateway sdk for php language",
+    "license": "MIT",
+    "homepage": "https://www.Wbaiyy.com",
+    "keywords": [
+        "gateway"
+    ],
+    "authors": [
+        {
+            "name": "laihuan",
+            "email": "laihuan@Wbaiyy.com",
+            "role": "Developer"
+        },
+        {
+            "name": "huanglizhong",
+            "email": "huanglizhong@Wbaiyy.com",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Wbaiyy\\Gateway\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wbaiyy\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=5.6"
+    },
+    "require-dev": {
+        "phpunit/php-token-stream": "<2",
+        "phpunit/phpunit": "^5"
+    }
+}
