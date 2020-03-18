@@ -9,18 +9,18 @@ export PATH
 #项目构建目录
 declare -A project_mapping
 project_mapping=(
-    [www-soa]=/data/www/openplatform/www-soa/
-    [m-soa]=
-    [app-soa]=
+    [www-sss]=/data/www/openplatform/www-sss/
+    [m-sss]=
+    [app-sss]=
 )
 
 #生产环境目录(在config:cache后的相关存储目录被替换成生产环境的)
 #【注意】务必检测是否替换正确，包括后缀目录符"/"
 declare -A prod_app_path
 prod_app_path=(
-    [www-soa]=/var/www/www.gearbest.com/
-    [m-soa]=
-    [app-soa]=
+    [www-sss]=/var/www/
+    [m-sss]=
+    [app-sss]=
 )
 
 #进入到项目根目录
@@ -90,7 +90,7 @@ print_separate_line() {
 #帮助信息
 help_message() {
     print_separate_line
-    echo -e "Error: ${1:-Bad command}; \nUsage: $0 optimize <site_code> (eg. www-soa|app-soa|m-soa...)"
+    echo -e "Error: ${1:-Bad command}; \nUsage: $0 optimize <site_code> (eg. www-sss|app-sss|m-sss...)"
     print_separate_line
     exit 1;
 }
