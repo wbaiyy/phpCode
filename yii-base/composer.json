@@ -8,12 +8,6 @@
             "GPBMetadata\\": "src/soa/socket/GPBMetadata"
         }
     },
-    "repositories": [
-       {
-           "type": "composer",
-           "url": "http://www.composer-satis.com.master.test50.egomsl.com"
-       }
-    ],
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,

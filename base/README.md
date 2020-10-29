@@ -6,7 +6,7 @@
 
 ## 安装
 在**composer.json**中增加以下代码：
-```js
+```
 {
     "repositories": [
        {
