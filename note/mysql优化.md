@@ -53,10 +53,11 @@
 ### 查看索引使用情况
 
 - 执行命令 `show global status like "Handler_read%";`
-	```
-	Handler_read_key: 值越高说明， 使用索引频率高
-	Handler_read_rnd_next: 值越高说明，扫描全表次数高
-	```
+
+
+	> Handler_read_key: 值越高说明， 使用索引频率高  
+	> Handler_read_rnd_next: 值越高说明，扫描全表次数高
+	
 ### SQL优化	
 
 - 插入数据，采用批量插入代替单条插入
