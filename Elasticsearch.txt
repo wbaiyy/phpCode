@@ -1,0 +1,783 @@
+#正则
+GET /kibana_sample_data_ecommerce/_search
+{
+  "query": {
+    "regexp": {
+      "category": {
+        "value": "men.+"
+      }
+    }
+  }
+}
+
+#相似度
+GET /kibana_sample_data_ecommerce/_search
+{
+  "query": {
+    "match": {
+      "customer_full_name": {
+        "query": "jac  kson",
+        "fuzziness": 4
+      }
+    }
+  },
+  "_source": [
+    "category",
+    "customer_full_name"
+    ]
+}
+
+#相似度2， value不进行分词
+GET /kibana_sample_data_ecommerce/_search
+{
+  "query": {
+    "fuzzy": {
+      "customer_full_name": {
+         "value": "jackso d",
+         "fuzziness": "AUTO",
+         "transpositions":true
+      }
+    }
+  }
+}
+
+
+#通配符
+GET /kibana_sample_data_ecommerce/_search
+{
+  "query": {
+    "wildcard": {
+      "customer_full_name": {
+        "value": "Pa*"
+      }
+    }
+  },
+  "_source": [
+    "category",
+    "customer_full_name"
+    ]
+}
+
+#前缀匹配
+GET /kibana_sample_data_ecommerce/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+          {
+           "match": {
+              "customer_full_name": {
+              "query": "Ja"
+            }
+        
+           }
+         },
+         {
+           "prefix": {
+              "customer_full_name": {
+                "value": "jack "
+              }
+           }
+         },
+         {
+           "prefix": {
+             "customer_full_name.keyword":{
+               "value": "Jackson11",
+               "boost": 10
+             }
+           }
+         },
+         {
+           "regexp": {
+             "customer_full_name": "mcdon11.*"
+           }
+         }
+      ]
+    }
+  },
+  "_source": [
+    "category",
+    "customer_full_name"
+    ],
+    "size": 200
+    
+}
+
+#短语匹配
+GET /kibana_sample_data_ecommerce/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+         
+         {
+            "match_phrase_prefix": {
+              "manufacturer": "  Tide Media "
+            }
+         },
+         {
+           "term": {
+             "manufacturer": {
+               "value": "Low Tide Media"
+             }
+           }
+         }
+      ]
+    }
+  },
+  "_source": [
+    "category",
+    "customer_full_name",
+    "manufacturer"
+    ],
+    "size": 200
+    
+}
+
+
+
+#查看索引字段信息
+GET /kibana_sample_data_ecommerce/_mapping
+
+#查看插件
+GET /_cat/plugins?v
+
+
+#生成查询模板
+POST _scripts/ecommerce_search_template_v1
+{
+  "script": {
+    "lang": "mustache",
+    "source": {
+      "size": "{{size}}",
+      "query": {
+        "match": {
+          "{{field}}": "{{query}}"
+        }
+      },
+      "_source": [
+        "customer_full_name",
+        "customer_gender",
+        "customer_last_name",
+        "customer_phone",
+        "category"
+      ]
+    }
+  }
+}
+
+
+GET /kibana_sample_data_ecommerce/_search/template
+{
+  "id": "ecommerce_search_template_v1",
+  "params": {
+    "field": "category",
+    "query": "men's",
+    "size": 10
+  }
+}
+
+
+GET /_analyze
+{
+  "tokenizer" : "standard",
+  "filter" : ["lowercase"],
+  "char_filter" : ["stconvert"],
+  "text" : "我爱中国China。"
+}
+
+GET /_analyze
+{
+ "analyzer": "ik_max_word", 
+ "text" : "我爱中国China。"
+}
+
+
+
+#索引添加（组装）新分词器
+PUT /my_index
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "my_analyzer": {
+            "tokenizer": "standard",
+            "filter": ["lowercase"],
+            "char_filter": ["tsconvert"]
+        }
+      },
+      "char_filter": {
+        "tsconvert" : {
+            "type" : "stconvert",
+            "delimiter" : "#",
+            "keep_both" : false,
+            "convert_type" : "t2s"
+        }
+      }
+    }
+  }
+}
+
+
+#article-content索引操作
+#------------------------------------------------------------------------------------------------
+
+
+#查看当前索引
+GET /article-content-v4/_search
+#DELETE /article-content-v4
+
+
+#生成索引配置和映射
+PUT /article-content-v4
+{
+  "settings": {
+    "refresh_interval": -1,
+    "number_of_replicas": 0, 
+    "analysis": {
+      "analyzer": {
+        "ik_max_ts_analyzer": {
+          "tokenizer": "ik_max_word",
+          "filter": ["lowercase"],
+          "char_filter": ["html_strip","tsconvert"]
+        },
+        "ik_smart_ts_analyzer": {
+          "tokenizer": "ik_smart",
+          "filter": ["lowercase"],
+          "char_filter": ["html_strip", "tsconvert"]
+        },
+        "pinyin_analyzer" : {
+          "tokenizer" : "my_pinyin"
+        }
+      },
+      "char_filter": {
+        "tsconvert" : {
+            "type" : "stconvert",
+            "delimiter" : "#",
+            "keep_both" : false,
+            "convert_type" : "t2s"
+        }
+      },
+       "tokenizer" : {
+          "my_pinyin" : {
+              "type" : "pinyin",
+              "keep_separate_first_letter" : true,
+              "keep_full_pinyin" : true,
+              "keep_original" : false,
+              "limit_first_letter_length" : 16,
+              "lowercase" : true,
+              "remove_duplicated_term" : true
+          }
+      }
+    }
+  },
+  "mappings" : {
+      "properties" : {
+        "appid" : {
+          "type" : "integer"
+        },
+        "card_template_id" : {
+          "type" : "long"
+        },
+        "card_template_thumb" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            }
+          }
+        },
+        "catids" : {
+          "type" : "text"
+        },
+        "channel_pad" : {
+          "type" : "integer"
+        },
+        "channel_pc" : {
+          "type" : "integer"
+        },
+        "channel_phone" : {
+          "type" : "integer"
+        },
+        "channel_wap" : {
+          "type" : "integer"
+        },
+        "comments" : {
+          "type" : "integer"
+        },
+        "content" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            }
+          },
+          "analyzer" : "ik_max_ts_analyzer",
+          "search_analyzer" : "ik_smart_ts_analyzer"
+        },
+        "created" : {
+          "type" : "long"
+        },
+        "description" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            },
+            "pinyin" : {
+              "type" : "text",
+              "analyzer" : "pinyin_analyzer"
+            }
+          },
+          "analyzer" : "ik_max_ts_analyzer",
+          "search_analyzer" : "ik_smart_ts_analyzer"
+        },
+        "digg" : {
+          "type" : "integer"
+        },
+        "editor" : {
+          "type" : "text"
+        },
+        "initial_score" : {
+          "type" : "long"
+        },
+        "last_comment_at" : {
+          "type" : "long"
+        },
+        "original" : {
+          "type" : "integer"
+        },
+        "propertyid" : {
+          "type" : "long"
+        },
+        "published" : {
+          "type" : "integer"
+        },
+        "pv" : {
+          "type" : "integer"
+        },
+        "recommend" : {
+          "type" : "integer"
+        },
+        "shares" : {
+          "type" : "integer"
+        },
+        "siteid" : {
+          "type" : "integer"
+        },
+        "sort" : {
+          "type" : "integer"
+        },
+        "sourceurl" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            }
+          }
+        },
+        "tags" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            },
+            "pinyin" : {
+              "type" : "text",
+              "analyzer" : "pinyin_analyzer"
+            }
+          },
+          "analyzer" : "ik_max_ts_analyzer",
+          "search_analyzer" : "ik_smart_ts_analyzer"
+        },
+        "terms" : {
+          "type" : "long"
+        },
+        "thumb" : {
+          "type" : "integer"
+        },
+        "thumb_ratio" : {
+          "type" : "long"
+        },
+        "thumbs" : {
+          "properties" : {
+            "alias" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "fileext" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "filesize" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "height" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "id" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "name" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "source_url" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "tags" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "thumb" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "thumbHeight" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "thumbWidth" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "thumbZoom" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "thumburl" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "url" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            },
+            "width" : {
+              "type" : "text",
+              "fields" : {
+                "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                }
+              }
+            }
+          }
+        },
+        "title" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            },
+            "pinyin" : {
+              "type" : "text",
+              "analyzer" : "pinyin_analyzer"
+            }
+          },
+          "analyzer" : "ik_max_ts_analyzer",
+          "search_analyzer" : "ik_smart_ts_analyzer"
+        },
+        "url" : {
+          "type" : "text",
+          "fields" : {
+            "keyword" : {
+              "type" : "keyword",
+              "ignore_above" : 256
+            }
+          }
+        },
+        "virtual_pv" : {
+          "type" : "long"
+        }
+      }
+    }
+}
+
+#重建索引
+POST _reindex?wait_for_completion=false
+{
+  "source": {
+    "remote": {
+      "host": "http://remote.com:9200"
+    },
+    "index": "site_search"
+  },
+  "dest": {
+    "index": "article-content-v4"
+  }
+}
+
+
+#查看后台任务
+GET _tasks/L4MF5BOsS5CozfahWFjQqg:905151
+
+#关闭索引
+POST article-content-v4/_close
+{}
+
+#修改索引配置
+PUT article-content-v4/_settings
+{
+  "number_of_replicas": 1,
+  "refresh_interval": "30s"
+}
+#开启索引
+POST article-content-v4/_open
+
+#设置索引别名
+POST /_aliases
+{
+    "actions" : [
+        { "add" : { "index" : "article-content-v1", "alias" : "article-content" } }
+    ]
+}
+
+#原子的为别名替换实际索引
+POST /_aliases
+{
+    "actions" : [
+        { "add" : { "index" : "article-content-v4", "alias" : "article-content" } },
+        { "remove" : { "index" : "article-content-v3", "alias" : "article-content" } }
+    ]
+}
+
+
+#生成查询模板
+POST _scripts/article-content_search_template_v1
+{
+  "script": {
+    "lang": "mustache",
+    "source": {
+      "size": "{{size}}",
+      "query": {
+        "bool":{
+          "should":[
+          {
+            "prefix": {
+              "{{field}}.keyword": {
+                "value": "{{query}}",
+                "boost": 10
+              }
+            }
+          },
+          {
+            "match_phrase_prefix": {
+              "{{field}}":{
+                "query":"{{query}}",
+                 "boost": 2
+              }
+            }
+          },
+          {
+            "match": {
+              "{{field}}": {
+                "query": "{{query}}",
+                "fuzziness": "AUTO",
+                "max_expansions": 10,
+                "prefix_length": 2,
+                "fuzzy_transpositions": true
+              }
+            }
+          },
+           {
+            "query_string": {
+              "fields": ["{{field}}","{{field}}.keyword"],
+              "query": "{{query}}",
+              "fuzziness": "AUTO",
+              "fuzzy_prefix_length": 2,
+              "fuzzy_max_expansions": 10,
+              "fuzzy_transpositions": true,
+              "allow_leading_wildcard": false
+            }
+          },
+          {
+            "match_phrase":{
+              "{{field}}.pinyin": "{{query}}"
+            }
+          }
+        ]
+      }
+      },
+      "_source": [
+        "title",
+        "id"
+      ]
+    }
+  }
+}
+
+
+#文字分析
+# ik_smart_ts_analyzer   ik_max_ts_analyzer  pinyin_analyzer
+GET article-content/_analyze
+{
+  "text": "人民人民",
+  "analyzer": "ik_smart_ts_analyzer"
+}
+
+#利用模板进行查询
+GET article-content/_search/template
+{
+  "id": "article-content_search_template_v1",
+  "params": {
+    "field": "title",
+    "query": "人民人民",
+    "size": 200
+  }
+}
+
+#单个普通查询测试
+GET article-content/_search
+{
+  "query": {
+     "match_phrase_prefix": {
+        "title": {
+          "query": "美女",
+          "boost": 10
+        }
+      }  
+  },
+  "_source": "title"
+}
+
+GET article-content/_search
+{
+  "query": {
+     "match": {
+        "title": {
+          "query": "美",
+          "max_expansions": 10,
+          "prefix_length": 2,
+          "fuzzy_transpositions": true
+        }
+      }  
+  },
+  "_source": "title"
+}
+
+GET article-content/_search
+{
+  "query": {
+  
+    "query_string": {
+      "fields": ["title","title.keyword"],
+      "query": "美女",
+      "fuzziness": "AUTO",
+      "fuzzy_prefix_length": 2,
+      "fuzzy_max_expansions": 10,
+      "fuzzy_transpositions": true,
+      "allow_leading_wildcard": false
+    }
+          
+  },
+  "_source": "title"
+}
+
+GET article-content/_search
+{
+  "query": {
+      "match_phrase":{
+        "title.pinyin": {
+          "query": "zjl",
+          "boost": 10
+        }
+         
+
+      }
+  },"_source": "title"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
